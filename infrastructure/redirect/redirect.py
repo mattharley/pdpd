@@ -2,12 +2,10 @@ from aws_cdk import (
     # Duration,
     Stack,
     # aws_sqs as sqs,
-    aws_s3
 )
 from constructs import Construct
 
-from static_site import StaticSitePublicS3
-
+from common.static_site import StaticSitePublicS3, RedirectSitePublicS3
 
 
 class RedirectStack(Stack):
@@ -31,7 +29,7 @@ class RedirectStack(Stack):
         #     self, "TempQueue",
         #     visibility_timeout=Duration.seconds(300),
         # )
-        site = StaticSitePublicS3(
+        site = RedirectSitePublicS3(
             self,
             f"{site_domain_name}-construct",
             site_domain_name=site_domain_name,

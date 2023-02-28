@@ -183,10 +183,6 @@ class StaticSitePublicS3(StaticSite):
             website_error_document="404.html",
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
-            # TODO: this is very ugly, shouldn't be here, testing it out.
-            website_redirect={
-                "HostName": "wwww.pythonwa.com"
-            }
         )
         bucket_policy = iam.PolicyStatement(
             actions=["s3:GetObject"],
@@ -230,3 +226,31 @@ class StaticSitePublicS3(StaticSite):
             viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             price_class=cloudfront.PriceClass.PRICE_CLASS_ALL,
         )
+
+
+class RedirectSitePublicS3(StaticSitePublicS3):
+
+    def _create_site_bucket(self):
+        """Creates a public S3 bucket for the static site construct"""
+        self.bucket = s3.Bucket(
+            self,
+            "site_bucket",
+            bucket_name=self._site_domain_name,
+            # website_index_document="index.html",
+            # website_error_document="404.html",
+            removal_policy=RemovalPolicy.DESTROY,
+            auto_delete_objects=True,
+            # TODO: this is very ugly, shouldn't be here, testing it out.
+            website_redirect=s3.RedirectTarget(host_name="www.pythonwa.com"),
+        )
+        bucket_policy = iam.PolicyStatement(
+            actions=["s3:GetObject"],
+            resources=[self.bucket.arn_for_objects("*")],
+            principals=[iam.AnyPrincipal()],
+        )
+        # bucket_policy.add_condition(
+        #     "StringEquals",
+        #     {"aws:Referer": self.__origin_referer_header},
+        # )
+
+        self.bucket.add_to_resource_policy(bucket_policy)
