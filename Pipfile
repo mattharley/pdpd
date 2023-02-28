@@ -11,6 +11,9 @@ aiofiles = "*"
 jinja2 = "*"
 
 [dev-packages]
+aws-cdk-lib = "==2.66.1"
+constructs = "~=10.0"
+
 
 [requires]
 python_version = "3.9"
