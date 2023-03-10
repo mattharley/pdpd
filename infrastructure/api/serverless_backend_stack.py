@@ -32,6 +32,49 @@ class ServerlessBackendStack(Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        ###
+        # API GATEWAY AND DOMAIN
+        ###
+
+        certificate = aws_certificatemanager.Certificate.from_certificate_arn(
+            self,
+            "site_certificate",
+            certificate_arn=domain_certificate_arn,
+        )
+
+        domain_name_options = aws_apigateway.DomainNameOptions(
+            domain_name="api.pythonwa.com",
+            certificate=certificate,
+            security_policy=aws_apigateway.SecurityPolicy.TLS_1_2,
+            endpoint_type=aws_apigateway.EndpointType.EDGE,
+        )
+
+        api = aws_apigateway.RestApi(
+            self,
+            id="pythonwa_api",
+            rest_api_name="pythonwa_api",
+            domain_name=domain_name_options,
+        )
+
+        hosted_zone = aws_route53.HostedZone.from_hosted_zone_attributes(
+            self,
+            "hosted_zone",
+            zone_name=hosted_zone_name,
+            hosted_zone_id=hosted_zone_id,
+        )
+
+        aws_route53.ARecord(
+            self,
+            "ApiRecord",
+            record_name="api",
+            zone=hosted_zone,
+            target=aws_route53.RecordTarget.from_alias(aws_route53_targets.ApiGateway(api)),
+        )
+
+        ###
+        # LAMBDA LAYERS
+        ###
+
         requests_pydantic_layer = aws_lambda.LayerVersion(
             self,
             "requests_pydantic_layer",
@@ -42,6 +85,10 @@ class ServerlessBackendStack(Stack):
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_9],
             removal_policy=RemovalPolicy.DESTROY,
         )
+
+        ###
+        # LAMBDA HANDLERS
+        ###
 
         pythonwa_slack_invite_lambda = aws_lambda.Function(
             self,
@@ -64,41 +111,10 @@ class ServerlessBackendStack(Stack):
         )
         pythonwa_slack_invite_lambda.add_to_role_policy(lambda_allow_ssm_policy)
 
-        certificate = aws_certificatemanager.Certificate.from_certificate_arn(
-            self,
-            "site_certificate",
-            certificate_arn=domain_certificate_arn,
+        slack_invite_integration = aws_apigateway.LambdaIntegration(
+            pythonwa_slack_invite_lambda,
+            request_templates={"application/json": '{ "statusCode": "200" }'},
         )
 
-        domain_name_options = aws_apigateway.DomainNameOptions(
-            domain_name="api.pythonwa.com",
-            certificate=certificate,
-            security_policy=aws_apigateway.SecurityPolicy.TLS_1_2,
-            endpoint_type=aws_apigateway.EndpointType.EDGE,
-        )
-
-        pythonwa_api = aws_apigateway.LambdaRestApi(
-            self,
-            id="lambdaapi",
-            rest_api_name="pythonwa_api",
-            handler=pythonwa_slack_invite_lambda,
-            proxy=True,
-            domain_name=domain_name_options,
-        )
-        post_data = pythonwa_api.root.add_resource("form")
-        post_data.add_method("POST")  # POST images/files & metadata
-
-        hosted_zone = aws_route53.HostedZone.from_hosted_zone_attributes(
-            self,
-            "hosted_zone",
-            zone_name=hosted_zone_name,
-            hosted_zone_id=hosted_zone_id,
-        )
-
-        aws_route53.ARecord(
-            self,
-            "ApiRecord",
-            record_name="api",
-            zone=hosted_zone,
-            target=aws_route53.RecordTarget.from_alias(aws_route53_targets.ApiGateway(pythonwa_api)),
-        )
+        slack_resource = api.root.add_resource("slack")
+        slack_resource.add_method("POST", slack_invite_integration)  # POST images/files & metadata
