@@ -1,27 +1,24 @@
 import json
-import base64
 import logging
 
 import boto3
-import os
-import uuid
-import botocore
-import imghdr
-
 import requests
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-ssm_client = boto3.client('ssm')
-SLACK_ADMIN_TOKEN = ssm_client.get_parameters(Names=['/pythonwa/slack/admin_token']),
+
+ssm_client = boto3.client("ssm")
+SLACK_ADMIN_TOKEN = ssm_client.get_parameter(Name="/pythonwa/slack/admin_token")["Parameter"]["Value"]
+
 
 # add your token here, generate from https://api.slack.com/custom-integrations/legacy-tokens
 # add all IDs of the channels you will want the users to be added automatically to
 # you can get a list of your channels at https: // api.slack.com/methods/conversations.list
 # http -v GET https://slack.com/api/conversations.list Authorization:"Bearer xoxp-123456-123456-123456"
 CHANNELS = [
-    'C1CD87S83',  # general
-    'C1CEKD0JU',  # random
+    "C1CD87S83",  # general
+    "C1CEKD0JU",  # random
 ]
 
 
@@ -46,30 +43,44 @@ def invite_email(email: str) -> dict:
     payload = {
         "token": SLACK_ADMIN_TOKEN,
         "email": email,
-        "channels": ','.join(CHANNELS)
+        "channels": ",".join(CHANNELS),
     }
     r = requests.get(url, params=payload)
     return r.json()
 
 
 def handler(event, context):
-    logger.info(event)
-    # Generate random image id
-    # image_id = str(uuid.uuid4())
+    try:
+        logger.info(event)
+        # Generate random image id
+        # image_id = str(uuid.uuid4())
 
-    data: dict = json.loads(event["body"])
-    email: str = data['email']
-    # userid = data["userid"]
-    # img = base64.b64decode(data["photo"])
+        data: dict = json.loads(event["body"])
+        email: str = data["email"]
+        # userid = data["userid"]
+        # img = base64.b64decode(data["photo"])
 
-    response: dict = invite_email(email)
-    logger.info(response)
-    return {
-        "statusCode": 200,
-        "headers": {
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-        },
-        "body": json.dumps(response),
-    }
+        response: dict = invite_email(email)
+        logger.info(response)
+        return {
+            "statusCode": 400 if "error" in response else 200,
+            "headers": {
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+            },
+            "body": json.dumps(response),
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+            },
+            "body": json.dumps({
+                "error": e.__class__,
+                "message": str(e)
+            }),
+        }

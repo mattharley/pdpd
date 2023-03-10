@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
 
-from apigw.serverless_backend_stack import ServerlessBackendStack
+from api.serverless_backend_stack import ServerlessBackendStack
 from redirect.redirect import RedirectStack
 
 AWS_ACCOUNT = "155122333172"
@@ -34,6 +34,9 @@ RedirectStack(
 ServerlessBackendStack(
     app,
     "ServerlessBackendStack",
+    domain_certificate_arn=DOMAIN_CERTIFICATE_ARN,
+    hosted_zone_id=HOSTED_ZONE_ID,
+    hosted_zone_name=HOSTED_ZONE_NAME,
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
     # but a single synthesized template can be deployed anywhere.
