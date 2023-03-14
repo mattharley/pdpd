@@ -54,6 +54,10 @@ class ServerlessBackendStack(Stack):
             id="pythonwa_api",
             rest_api_name="pythonwa_api",
             domain_name=domain_name_options,
+            deploy_options=aws_apigateway.StageOptions(
+                throttling_rate_limit=1,
+                throttling_burst_limit=1,
+            )
         )
 
         hosted_zone = aws_route53.HostedZone.from_hosted_zone_attributes(
@@ -68,7 +72,9 @@ class ServerlessBackendStack(Stack):
             "ApiRecord",
             record_name="api",
             zone=hosted_zone,
-            target=aws_route53.RecordTarget.from_alias(aws_route53_targets.ApiGateway(api)),
+            target=aws_route53.RecordTarget.from_alias(
+                aws_route53_targets.ApiGateway(api)
+            ),
         )
 
         ###
@@ -117,4 +123,38 @@ class ServerlessBackendStack(Stack):
         )
 
         slack_resource = api.root.add_resource("slack")
-        slack_resource.add_method("POST", slack_invite_integration)  # POST images/files & metadata
+        slack_method: aws_apigateway.Method = slack_resource.add_method(
+            "POST", slack_invite_integration
+        )
+
+        ###
+        # THROTTLE
+        ###
+
+        slack_throttle = aws_apigateway.ThrottlingPerMethod(
+            method=slack_method,
+            throttle=aws_apigateway.ThrottleSettings(
+                rate_limit=1,
+                burst_limit=1,
+            ),
+        )
+
+        # plan_for_stage = aws_apigateway.UsagePlanPerApiStage(
+        #     api=api,
+        #     stage=api.deployment_stage,
+        #     throttle=[
+        #         slack_throttle,
+        #     ],
+        # )
+
+        plan = api.add_usage_plan(
+            "PythonWAUsagePlan",
+            name="PythonWAUsagePlan",
+            throttle=aws_apigateway.ThrottleSettings(
+                rate_limit=1,
+                burst_limit=1,
+            ),
+            description="PythonWA Usage Plan",
+        )
+        plan.add_api_stage(stage=api.deployment_stage, throttle=[slack_throttle, ])
+        # plan.add_api_stage(stage=api.deployment_stage, throttle=[slack_throttle, ])
