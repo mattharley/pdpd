@@ -23,6 +23,13 @@ THIS_DIR = Path(__file__).resolve().parent
 LAMBDA_DIR = THIS_DIR.parent.parent / "apis"
 LAMBDA_LAYERS_DIR = THIS_DIR.parent / "lambda_layers"
 
+CORS_ORIGINS = [
+    "http://pythonwa.com",
+    "https://pythonwa.com",
+    "http://www.pythonwa.com",
+    "https://www.pythonwa.com",
+    "http://localhost:3000",
+]
 
 class ServerlessBackendStack(Stack):
     def __init__(
@@ -61,6 +68,10 @@ class ServerlessBackendStack(Stack):
             deploy_options=aws_apigateway.StageOptions(
                 throttling_rate_limit=10,
                 throttling_burst_limit=10,
+            ),
+            default_cors_preflight_options=aws_apigateway.CorsOptions(
+                allow_methods=aws_apigateway.Cors.ALL_METHODS,
+                allow_origins=CORS_ORIGINS
             )
         )
 
