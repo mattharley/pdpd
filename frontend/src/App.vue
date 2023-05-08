@@ -28,7 +28,6 @@ export default {
     Photos,
     Sponsors,
     Talks,
-    Slack
   }
 };
 </script>
