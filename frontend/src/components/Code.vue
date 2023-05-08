@@ -10,8 +10,8 @@
                     <h3 class="text-xl font-medium text-blue-gray-900">Code With Us!</h3>
                     <p class="mt-4 text-base text-blue-gray-500">Fork us on Github</p>
                     <p class="mt-4 text-base text-blue-gray-500">
-                        <a class="text-blue-500" href="https://github.com/mattharley/pythonwa">
-                            https://github.com/mattharley/pythonwa
+                        <a class="text-blue-500" href="https://github.com/bendog/pythonwa">
+                            https://github.com/bendog/pythonwa
                         </a>
                     </p>
                 </div>
