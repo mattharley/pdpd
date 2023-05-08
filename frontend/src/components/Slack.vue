@@ -23,9 +23,9 @@
         <form @submit.prevent="handleSubmit">
           <div class="mb-4">
             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 text-left">Your email</label>
-            <input type="text" name="email" v-model="email"
+            <input type="email" name="email" v-model="email.text"
                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 w-full p-2.5"
-                   required>
+                   placeholder="name@gmail.com" required>
           </div>
           <button type="submit"
                   id="slackSubmit"
@@ -51,7 +51,9 @@
 export default {
   data() {
     return {
-      email: '',
+      email: {
+        text: null
+      },
       submitState: {
         state: 'fresh',
         disabled: false,
@@ -71,7 +73,8 @@ export default {
         headers: {'Content-Type': 'application/json', 'x-api-key': `${import.meta.env.VITE_SLACK_API_KEY}`}
       };
       try {
-        const body = JSON.stringify({email:this.email});
+        console.log("this", this);
+        const body = JSON.stringify({email:this.email.text});
         console.log("body", body);
         const options = {...baseOptions, body: body};
         console.log("options", options);
