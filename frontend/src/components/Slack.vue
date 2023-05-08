@@ -73,11 +73,8 @@ export default {
         headers: {'Content-Type': 'application/json', 'x-api-key': `${import.meta.env.VITE_SLACK_API_KEY}`}
       };
       try {
-        console.log("this", this);
         const body = JSON.stringify({email:this.email.text});
-        console.log("body", body);
         const options = {...baseOptions, body: body};
-        console.log("options", options);
         await fetch(`${import.meta.env.VITE_SLACK_API_ENDPOINT}`, options).then(response => response.json()).then(
           response => {
             // console.log(response);
