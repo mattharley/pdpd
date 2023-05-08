@@ -27,7 +27,7 @@ export default {
     Header,
     Photos,
     Sponsors,
-    Talks
+    Talks,
   }
 };
 </script>
