@@ -145,6 +145,34 @@ class ServerlessBackendStack(Stack):
             api_key_required=True,
         )
 
+        ### EVENTS LIST ###
+
+        events_list_lambda = aws_lambda.Function(
+            self,
+            id="event_list_lambdafunction",
+            function_name="pythonwa_events_list_lambda",
+            description="PythonWA Events List API handler",
+            runtime=aws_lambda.Runtime.PYTHON_3_11,
+            handler="lambda_handler.handler",
+            code=aws_lambda.Code.from_asset(str(LAMBDA_DIR / "events_list")),
+            environment={
+                "key": "value",
+            },
+            layers=[requests_pydantic_layer],
+        )
+
+        events_list_integration = aws_apigateway.LambdaIntegration(
+            events_list_lambda,
+            request_templates={"application/json": '{ "statusCode": "200" }'},
+        )
+
+        events_list_resource = api.root.add_resource("events_list")
+        events_list_method: aws_apigateway.Method = events_list_resource.add_method(
+            "GET",
+            events_list_integration,
+            api_key_required=True,
+        )
+
         ###
         # THROTTLE
         ###
@@ -165,6 +193,13 @@ class ServerlessBackendStack(Stack):
                     throttle=aws_apigateway.ThrottleSettings(
                         rate_limit=1,
                         burst_limit=1,
+                    ),
+                ),
+                aws_apigateway.ThrottlingPerMethod(
+                    method=events_list_method,
+                    throttle=aws_apigateway.ThrottleSettings(
+                        rate_limit=60,
+                        burst_limit=60,
                     ),
                 ),
             ],
