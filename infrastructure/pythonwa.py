@@ -2,19 +2,22 @@
 import aws_cdk as cdk
 
 from stacks.serverless_backend_stack import ServerlessBackendStack
-from stacks.static_site import RedirectStack
+from stacks.static_site import StaticWebStack
 
 AWS_ACCOUNT = "155122333172"
 AWS_REGION = "ap-southeast-2"
 SITE_DOMAIN_NAME = "pythonwa.com"
-DOMAIN_CERTIFICATE_ARN = "arn:aws:acm:us-east-1:155122333172:certificate/3bba3daa-5daf-4c47-9ce1-248feb820921"
+DOMAIN_CERTIFICATE_ARN = (
+    "arn:aws:acm:us-east-1:155122333172:certificate/3bba3daa-5daf-4c47-9ce1-248feb820921"
+)
 HOSTED_ZONE_ID = "Z03934201M8O7YD4DTYVA"
 HOSTED_ZONE_NAME = "pythonwa.com"
 
 app = cdk.App()
-RedirectStack(
+
+StaticWebStack(
     app,
-    "RedirectStack",
+    "StaticWebStack",
     site_domain_name=SITE_DOMAIN_NAME,
     domain_certificate_arn=DOMAIN_CERTIFICATE_ARN,
     hosted_zone_id=HOSTED_ZONE_ID,

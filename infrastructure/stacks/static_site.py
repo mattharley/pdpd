@@ -8,6 +8,7 @@ CloudFront only.
 """
 from aws_cdk import (
     aws_s3 as s3,
+    aws_s3_deployment as s3_deployment,
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
     aws_certificatemanager as acm,
@@ -19,6 +20,11 @@ from aws_cdk import (
     Stack,
 )
 from constructs import Construct
+from pathlib import Path
+
+STACKS_PATH = Path(__file__).resolve().parent
+PROJECT_ROOT = STACKS_PATH.parent.parent
+FRONTEND_DIST_PATH = PROJECT_ROOT / "frontend" / "dist"
 
 
 class StaticSite(Construct):
@@ -88,9 +94,7 @@ class StaticSite(Construct):
             "site-alias-record",
             record_name=self._site_domain_name,
             zone=hosted_zone,
-            target=route53.RecordTarget.from_alias(
-                targets.CloudFrontTarget(self.distribution)
-            ),
+            target=route53.RecordTarget.from_alias(targets.CloudFrontTarget(self.distribution)),
         )
 
     def __create_certificate(self, hosted_zone):
@@ -179,6 +183,14 @@ class StaticSitePublicS3(StaticSite):
         self.bucket = s3.Bucket(
             self,
             "site_bucket",
+            block_public_access=s3.BlockPublicAccess(
+                block_public_acls=False,
+                block_public_policy=False,
+                ignore_public_acls=False,
+                restrict_public_buckets=False,
+            ),
+            public_read_access=True,
+            # object_ownership=s3.ObjectOwnership.OBJECT_WRITER,
             bucket_name=self._site_domain_name,
             website_index_document="index.html",
             website_error_document="404.html",
@@ -234,14 +246,21 @@ class RedirectSitePublicS3(StaticSitePublicS3):
         """Creates a public S3 bucket for the static site construct"""
         self.bucket = s3.Bucket(
             self,
-            "site_bucket",
+            "redirect_site_bucket",
             bucket_name=self._site_domain_name,
             # website_index_document="index.html",
             # website_error_document="404.html",
+            block_public_access=s3.BlockPublicAccess(
+                block_public_acls=False,
+                block_public_policy=False,
+                ignore_public_acls=False,
+                restrict_public_buckets=False,
+            ),
+            public_read_access=True,
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             # TODO: this is very ugly, shouldn't be here, testing it out.
-            website_redirect=s3.RedirectTarget(host_name="www.pythonwa.com"),
+            website_redirect=s3.RedirectTarget(host_name="www." + self._site_domain_name),
         )
         bucket_policy = iam.PolicyStatement(
             actions=["s3:GetObject"],
@@ -256,7 +275,7 @@ class RedirectSitePublicS3(StaticSitePublicS3):
         self.bucket.add_to_resource_policy(bucket_policy)
 
 
-class RedirectStack(Stack):
+class StaticWebStack(Stack):
     def __init__(
         self,
         scope: Construct,
@@ -270,18 +289,29 @@ class RedirectStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # The code that defines your stack goes here
-
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "TempQueue",
-        #     visibility_timeout=Duration.seconds(300),
-        # )
-        site = RedirectSitePublicS3(
+        site = StaticSitePublicS3(
             self,
-            f"{site_domain_name}-construct",
+            f"{construct_id}-StaticSitePublicS3",
+            site_domain_name="www." + site_domain_name,
+            domain_certificate_arn=domain_certificate_arn,
+            origin_referer_header_parameter_name="/prod/static-site/origin-custom-header/referer",
+            hosted_zone_id=hosted_zone_id,
+            hosted_zone_name=hosted_zone_name,
+        )
+
+        redirect = RedirectSitePublicS3(
+            self,
+            f"{construct_id}-RedirectSitePublicS3",
             site_domain_name=site_domain_name,
             domain_certificate_arn=domain_certificate_arn,
             origin_referer_header_parameter_name="/prod/static-site/origin-custom-header/referer",
             hosted_zone_id=hosted_zone_id,
             hosted_zone_name=hosted_zone_name,
+        )
+
+        files = s3_deployment.BucketDeployment(
+            self,
+            f"{construct_id}-BucketDeployment",
+            sources=[s3_deployment.Source.asset(str(FRONTEND_DIST_PATH))],
+            destination_bucket=site.bucket,
         )
