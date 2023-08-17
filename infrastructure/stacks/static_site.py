@@ -16,6 +16,7 @@ from aws_cdk import (
     aws_iam as iam,
     aws_ssm as ssm,
     RemovalPolicy,
+    Stack,
 )
 from constructs import Construct
 
@@ -229,7 +230,6 @@ class StaticSitePublicS3(StaticSite):
 
 
 class RedirectSitePublicS3(StaticSitePublicS3):
-
     def _create_site_bucket(self):
         """Creates a public S3 bucket for the static site construct"""
         self.bucket = s3.Bucket(
@@ -254,3 +254,34 @@ class RedirectSitePublicS3(StaticSitePublicS3):
         # )
 
         self.bucket.add_to_resource_policy(bucket_policy)
+
+
+class RedirectStack(Stack):
+    def __init__(
+        self,
+        scope: Construct,
+        construct_id: str,
+        site_domain_name: str,
+        domain_certificate_arn: str,
+        hosted_zone_id: str,
+        hosted_zone_name: str,
+        **kwargs,
+    ) -> None:
+        super().__init__(scope, construct_id, **kwargs)
+
+        # The code that defines your stack goes here
+
+        # example resource
+        # queue = sqs.Queue(
+        #     self, "TempQueue",
+        #     visibility_timeout=Duration.seconds(300),
+        # )
+        site = RedirectSitePublicS3(
+            self,
+            f"{site_domain_name}-construct",
+            site_domain_name=site_domain_name,
+            domain_certificate_arn=domain_certificate_arn,
+            origin_referer_header_parameter_name="/prod/static-site/origin-custom-header/referer",
+            hosted_zone_id=hosted_zone_id,
+            hosted_zone_name=hosted_zone_name,
+        )

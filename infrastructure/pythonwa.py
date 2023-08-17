@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
 
-from api.serverless_backend_stack import ServerlessBackendStack
-from redirect.redirect import RedirectStack
+from stacks.serverless_backend_stack import ServerlessBackendStack
+from stacks.static_site import RedirectStack
 
 AWS_ACCOUNT = "155122333172"
 AWS_REGION = "ap-southeast-2"
