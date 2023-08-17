@@ -260,7 +260,9 @@ class RedirectSitePublicS3(StaticSitePublicS3):
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             # TODO: this is very ugly, shouldn't be here, testing it out.
-            website_redirect=s3.RedirectTarget(host_name="www." + self._site_domain_name),
+            website_redirect=s3.RedirectTarget(
+                host_name="www." + self._site_domain_name, protocol=s3.RedirectProtocol.HTTPS
+            ),
         )
         bucket_policy = iam.PolicyStatement(
             actions=["s3:GetObject"],
