@@ -1,15 +1,25 @@
 import json
 import logging
 
+from aws_lambda_typing import context as lambda_context, events
+
 import boto3
 import requests
+
+DEFAULT_HEADERS = {
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+}
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 ssm_client = boto3.client("ssm")
-SLACK_ADMIN_TOKEN = ssm_client.get_parameter(Name="/pythonwa/slack/admin_token")["Parameter"]["Value"]
+SLACK_ADMIN_TOKEN = ssm_client.get_parameter(Name="/pythonwa/slack/admin_token")["Parameter"][
+    "Value"
+]
 
 
 # add your token here, generate from https://api.slack.com/custom-integrations/legacy-tokens
@@ -49,7 +59,7 @@ def invite_email(email: str) -> dict:
     return r.json()
 
 
-def handler(event, context):
+def handler(event: events.APIGatewayProxyEventV1, context: lambda_context):
     try:
         logger.info(event)
         # Generate random image id
@@ -64,23 +74,12 @@ def handler(event, context):
         logger.info(response)
         return {
             "statusCode": 400 if "error" in response else 200,
-            "headers": {
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-            },
+            "headers": DEFAULT_HEADERS,
             "body": json.dumps(response),
         }
     except Exception as e:
         return {
             "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Headers": "*",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-            },
-            "body": json.dumps({
-                "error": e.__class__,
-                "message": str(e)
-            }),
+            "headers": DEFAULT_HEADERS,
+            "body": json.dumps({"error": e.__class__, "message": str(e)}),
         }
