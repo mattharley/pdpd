@@ -9,8 +9,12 @@ uvicorn = "*"
 requests = "*"
 aiofiles = "*"
 jinja2 = "*"
+boto3 = "*"
+aws-lambda-typing = "*"
 
 [dev-packages]
+aws-cdk-lib = "~=2.66"
+constructs = "~=10.0"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"

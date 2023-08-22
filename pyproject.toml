@@ -1,0 +1,26 @@
+[tool.isort]
+profile = "black"
+line_length = 99
+py_version=311
+known_third_party = ["boto3", "botocore"]
+
+[tool.black]
+line-length = 99
+target-version = ['py311']
+force-exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+    | migrations
+)
+'''
