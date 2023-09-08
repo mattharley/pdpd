@@ -32,7 +32,7 @@ git add dist
 cd ..
 cd infrastructure
 cdk synth && cdk deploy --all
-
+cd ..
 ```
 
 

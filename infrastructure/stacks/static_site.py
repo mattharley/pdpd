@@ -316,4 +316,5 @@ class StaticWebStack(Stack):
             f"{construct_id}-BucketDeployment",
             sources=[s3_deployment.Source.asset(str(FRONTEND_DIST_PATH))],
             destination_bucket=site.bucket,
+            prune=True,
         )
