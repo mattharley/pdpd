@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '18'
       - name: npm install
@@ -26,11 +26,11 @@ jobs:
         working-directory: ./frontend
         run: npm run build
       - name: Set up Python 3.11
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.11
-      - name: Install pipenv
-        run: pip install pipenv
+#      - name: Install pipenv
+#        run: pip install pipenv
 #      - name: pipenv install
 #        run: pipenv install -v --system --deploy --ignore-pipfile
       - name: pipenv to requirements.txt
