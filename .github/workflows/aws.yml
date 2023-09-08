@@ -19,11 +19,17 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '18'
-      - run: npm install
+      - name: npm install
+        working-directory: ./frontend
+        run: npm install
+      - name: npm build
+        working-directory: ./frontend
+        run: npm run build
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'diff'
+          working_dir: './infrastructure'
           actions_comment: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -35,7 +41,7 @@ jobs:
           cdk_subcommand: 'deploy'
           cdk_stack: '*'
           cdk_args: '--require-approval never'
-          working_dir: 'infrastructure'
+          working_dir: './infrastructure'
           actions_comment: false
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
