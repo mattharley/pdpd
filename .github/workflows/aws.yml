@@ -32,7 +32,7 @@ jobs:
       - name: Install pipenv
         run: pip install pipenv
       - name: pipenv sync
-        run: pipenv sync
+        run: pipenv install --system --deploy --ignore-pipfile
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v2
         with:
