@@ -10,9 +10,10 @@ on:
       - closed
 
 jobs:
-  aws_cdk:
+  deployment:
     if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
+    environment: PythonWA AWS
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -32,8 +33,6 @@ jobs:
           cache: pip
       - name: Install pipenv
         run: pip install pipenv
-#      - name: pipenv install
-#        run: pipenv install -v --system --deploy --ignore-pipfile
       - name: pipenv to requirements.txt
         run: pipenv requirements > infrastructure/requirements.txt
       - name: cdk diff
@@ -48,7 +47,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYTHON_WA_API_KEY: ${{ secrets.PYTHON_WA_API_KEY }}
-      - name: cdk deploy
+      - name: deploy
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'deploy'
