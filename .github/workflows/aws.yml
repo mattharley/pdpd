@@ -29,6 +29,7 @@ jobs:
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'diff'
+          cdk_stack: '--all'
           working_dir: './infrastructure'
           actions_comment: true
         env:
@@ -39,7 +40,7 @@ jobs:
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_subcommand: 'deploy'
-          cdk_stack: '*'
+          cdk_stack: '--all'
           cdk_args: '--require-approval never'
           working_dir: './infrastructure'
           actions_comment: false
