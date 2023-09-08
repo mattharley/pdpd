@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: 3.11
           cache: pip
-        run: pipenv requirements > infrastructure/requirements.txt
+      - run: pipenv requirements > infrastructure/requirements.txt
 #      - name: Install pipenv
 #        run: pip install pipenv
 #      - name: pipenv install
