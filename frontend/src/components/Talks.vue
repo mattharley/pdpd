@@ -4,7 +4,7 @@
       <div class="-ml-4 -mt-2 flex items-center justify-between flex-wrap sm:flex-nowrap">
         <div class="ml-4 mt-2">
           <h3 class="text-lg leading-6 font-medium text-gray-900">
-            Upcoming Talks
+            Upcoming Events
           </h3>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default {
       const talks = await response.json();
       this.talks = talks.map(talk => {
         const time = DateTime.fromMillis(talk.time).toLocaleString(DateTime.DATETIME_FULL);
-        const venue = talk.venue ? `${talk.venue.name} @ ${talk.venue.address_1}` : ''
+        const venue = talk.venue ? `${talk.venue.name} @ ${talk.venue.address_1} ${talk.venue.city}` : ''
         return {
           name: talk.name,
           time: time,

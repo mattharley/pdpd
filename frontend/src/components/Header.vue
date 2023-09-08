@@ -105,7 +105,7 @@ import Slack from './Slack.vue'
 import { MenuIcon, XIcon } from '@heroicons/vue/outline';
 
 const navigation = [
-  { name: 'Talks', href: '#talks' },
+  { name: 'Events', href: '#talks' },
   { name: 'Photos', href: '#photos' },
   { name: 'Sponsors', href: '#sponsors' },
   { name: 'Code With Us', href: '#code' },
@@ -140,4 +140,4 @@ export default {
     }
   },
 };
-</script>    
+</script>

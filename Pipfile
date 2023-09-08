@@ -15,6 +15,9 @@ aws-lambda-typing = "*"
 [dev-packages]
 aws-cdk-lib = "~=2.66"
 constructs = "~=10.0"
+segno = "*"
+qrcode-artistic = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.11"
