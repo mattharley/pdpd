@@ -31,8 +31,8 @@ jobs:
           python-version: 3.11
       - name: Install pipenv
         run: pip install pipenv
-      - name: pipenv install
-        run: pipenv install -v --system --deploy --ignore-pipfile
+#      - name: pipenv install
+#        run: pipenv install -v --system --deploy --ignore-pipfile
       - name: pipenv to requirements.txt
         run: pipenv requirements > infrastructure/requirements.txt
       - name: cdk diff
