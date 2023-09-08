@@ -11,10 +11,10 @@ aiofiles = "*"
 jinja2 = "*"
 boto3 = "*"
 aws-lambda-typing = "*"
-
-[dev-packages]
 aws-cdk-lib = "~=2.66"
 constructs = "~=10.0"
+
+[dev-packages]
 segno = "*"
 qrcode-artistic = "*"
 pillow = "*"
