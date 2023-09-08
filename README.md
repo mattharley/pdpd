@@ -23,6 +23,19 @@ function pythonwaqr() {
 }
 ```
 
+## Deployment (AWS Manual)
+
+```bash
+cd frontend
+npm run build
+git add dist
+cd ..
+cd infrastructure
+cdk synth && cdk deploy --all
+
+```
+
+
 [//]: # ()
 [//]: # (## Installing / Running - Backend)
 
