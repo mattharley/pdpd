@@ -29,12 +29,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+          cache: pip
+        run: pipenv requirements > infrastructure/requirements.txt
 #      - name: Install pipenv
 #        run: pip install pipenv
 #      - name: pipenv install
 #        run: pipenv install -v --system --deploy --ignore-pipfile
-      - name: pipenv to requirements.txt
-        run: pipenv requirements > infrastructure/requirements.txt
+#      - name: pipenv to requirements.txt
+#        run: pipenv requirements > infrastructure/requirements.txt
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v2
         with:
