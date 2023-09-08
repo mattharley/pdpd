@@ -1,13 +1,13 @@
 name: Deploy CDK Project
 on:
- push:
-  branches:
-     - main
-pull_request:
-   branches:
-     - main
-   types:
-     - closed
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  types:
+    - closed
 
 jobs:
   aws_cdk:
