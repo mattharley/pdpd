@@ -91,11 +91,11 @@ class ServerlessBackendStack(Stack):
         # LAMBDA LAYERS
         ###
 
-        requests_pydantic_layer = aws_lambda.LayerVersion(
+        default_layer = aws_lambda.LayerVersion(
             self,
-            "requests_pydantic_layer",
-            code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "requests_pydantic.zip")),
-            description="Requests and Pydantic",
+            "python_wa_default_layer",
+            code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "default_layer.zip")),
+            description="PythonWA default layer with Requests and Pydantic",
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_11],
             removal_policy=RemovalPolicy.DESTROY,
         )
@@ -103,7 +103,7 @@ class ServerlessBackendStack(Stack):
         markdown_layer = aws_lambda.LayerVersion(
             self,
             "markdown_layer",
-            code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "markdown.zip")),
+            code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "markdown_layer.zip")),
             description="Markdown layer",
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_11],
             removal_policy=RemovalPolicy.DESTROY,
@@ -135,7 +135,7 @@ class ServerlessBackendStack(Stack):
                 "key": "value",
             },
             layers=[
-                requests_pydantic_layer,
+                default_layer,
             ],
         )
 
@@ -169,7 +169,7 @@ class ServerlessBackendStack(Stack):
                 "key": "value",
             },
             layers=[
-                requests_pydantic_layer,
+                default_layer,
                 markdown_layer,
             ],
         )

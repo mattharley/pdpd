@@ -5,7 +5,7 @@ BASE_PWD=$(pwd)
 echo "********************"
 
 # A list of every directory to build.
-LAYERS="requests_pydantic markdown"
+LAYERS="default_layer markdown_layer"
 
 build_layer_from_requirements () {
 	###

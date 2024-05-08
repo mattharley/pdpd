@@ -12,6 +12,17 @@ files = [
 ]
 
 [[package]]
+name = "aws-lambda-typing"
+version = "2.20.0"
+description = "A package that provides type hints for AWS Lambda event, context and response objects"
+optional = false
+python-versions = "<4.0,>=3.6"
+files = [
+    {file = "aws-lambda-typing-2.20.0.tar.gz", hash = "sha256:78b0d8ebab73b3a6b0da98a7969f4e9c4bb497298ec50f3217da8a8dfba17154"},
+    {file = "aws_lambda_typing-2.20.0-py3-none-any.whl", hash = "sha256:1d44264cabfeab5ac38e67ddd0c874e677b2cbbae77a42d0519df470e6bbb49b"},
+]
+
+[[package]]
 name = "certifi"
 version = "2024.2.2"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -294,4 +305,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a748ee7a6bf3123334a443fa4c9bf65ac01f6073cc30951d35a31afe2197639f"
+content-hash = "5f131ad239a5cda985587cd91a80cc1b21a93a83975bcf031209fb0704cb6f9b"

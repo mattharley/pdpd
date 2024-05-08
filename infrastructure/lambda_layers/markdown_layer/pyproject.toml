@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "markdown-layer"
+name = "pyhthonwa-markdown-layer"
 version = "0.1.0"
 description = ""
 authors = ["Ben Fitzhardinge <ben@fitzhardinge.net>"]

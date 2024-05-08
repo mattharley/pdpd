@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "requests-pydantic-layer"
+name = "pythonwa-default-layer"
 version = "0.1.0"
 description = ""
 authors = ["Ben Fitzhardinge <ben@fitzhardinge.net>"]
@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 pydantic = "^2.7.1"
 requests = "^2.31.0"
+aws-lambda-typing = "^2.20.0"
 
 
 [build-system]
