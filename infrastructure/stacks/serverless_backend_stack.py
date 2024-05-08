@@ -1,21 +1,17 @@
 import os
+from pathlib import Path
 
 from aws_cdk import (
-    Stack,
-    CfnParameter as cfnParameter,
-    aws_cognito,
-    aws_s3,
-    aws_dynamodb,
-    aws_lambda,
-    aws_apigateway,
     RemovalPolicy,
+    Stack,
+    aws_apigateway,
+    aws_certificatemanager,
     aws_iam,
+    aws_lambda,
     aws_route53,
     aws_route53_targets,
-    aws_certificatemanager,
 )
 from constructs import Construct
-from pathlib import Path
 
 PYTHON_WA_API_KEY = os.environ["PYTHON_WA_API_KEY"]
 
@@ -98,10 +94,17 @@ class ServerlessBackendStack(Stack):
         requests_pydantic_layer = aws_lambda.LayerVersion(
             self,
             "requests_pydantic_layer",
-            code=aws_lambda.Code.from_asset(
-                str(LAMBDA_LAYERS_DIR / "layer_requests_pydantic.zip")
-            ),
+            code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "requests_pydantic.zip")),
             description="Requests and Pydantic",
+            compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_11],
+            removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        markdown_layer = aws_lambda.LayerVersion(
+            self,
+            "markdown_layer",
+            code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "markdown.zip")),
+            description="Markdown layer",
             compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_11],
             removal_policy=RemovalPolicy.DESTROY,
         )
@@ -109,13 +112,16 @@ class ServerlessBackendStack(Stack):
         ###
         # LAMBDA HANDLERS
         ###
+
         lambda_allow_ssm_policy = aws_iam.PolicyStatement(
             effect=aws_iam.Effect.ALLOW,
             actions=["ssm:GetParameters", "ssm:GetParameter"],
             resources=["*"],
         )
 
-        ### SLACK INVITE ###
+        ###
+        # SLACK INVITE
+        ###
 
         pythonwa_slack_invite_lambda = aws_lambda.Function(
             self,
@@ -128,7 +134,9 @@ class ServerlessBackendStack(Stack):
             environment={
                 "key": "value",
             },
-            layers=[requests_pydantic_layer],
+            layers=[
+                requests_pydantic_layer,
+            ],
         )
 
         pythonwa_slack_invite_lambda.add_to_role_policy(lambda_allow_ssm_policy)
@@ -145,7 +153,9 @@ class ServerlessBackendStack(Stack):
             api_key_required=True,
         )
 
-        ### EVENTS LIST ###
+        ###
+        # EVENTS LIST
+        ###
 
         events_list_lambda = aws_lambda.Function(
             self,
@@ -158,7 +168,10 @@ class ServerlessBackendStack(Stack):
             environment={
                 "key": "value",
             },
-            layers=[requests_pydantic_layer],
+            layers=[
+                requests_pydantic_layer,
+                markdown_layer,
+            ],
         )
 
         events_list_integration = aws_apigateway.LambdaIntegration(
@@ -176,6 +189,7 @@ class ServerlessBackendStack(Stack):
         ###
         # THROTTLE
         ###
+
         plan = api.add_usage_plan(
             "PythonWAUsagePlan",
             name="PythonWAUsagePlan",

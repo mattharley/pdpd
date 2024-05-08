@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "markdown-layer"
+version = "0.1.0"
+description = ""
+authors = ["Ben Fitzhardinge <ben@fitzhardinge.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+markdown = "^3.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

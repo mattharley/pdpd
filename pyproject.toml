@@ -1,8 +1,28 @@
+# RUFF settings
+[tool.ruff]
+target-version = "py311"
+line-length = 99
+
+[tool.ruff.lint]
+select = [
+    "C",  # mccabe rules
+    "F",  # pyflakes rules
+    "E",  # pycodestyle error rules
+    "W",  # pycodestyle warning rules
+    "B",  # flake8-bugbear rules
+    "I",  # isort rules
+]
+ignore = [
+    # "C901",  # max-complexity-10
+    "E501",  # line-too-long
+]
+
+# LEGACY Formatting settings - Keeping these to allow for these tools to run compatibily with Ruff.
 [tool.isort]
 profile = "black"
 line_length = 99
-py_version=311
-known_third_party = ["boto3", "botocore"]
+py_version=310
+known_third_party = ["boto", "botocore", "django", "rest_framework"]
 
 [tool.black]
 line-length = 99

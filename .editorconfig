@@ -8,15 +8,50 @@ indent_style = space
 indent_size = 4
 end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = false
+trim_trailing_whitespace = true
 insert_final_newline = true
 
+# python files
 [*.py]
 trim_trailing_whitespace = true
 
-[*.{js,vue,htm,html,css}]
+# config files
+[*.{json,json5,yaml,yml,toml}]
 indent_size = 2
-trim_trailing_whitespace = true
 
-[*.{json,yaml,yml,toml}]
+# Javascript and Typescript
+[*.{js,jsx,ts,tsx,vue}]
 indent_size = 2
+block_comment_start = /**
+block_comment = *
+block_comment_end = */
+
+# HTML and CSS
+[*.{htm,html,css,sass,scss,less,svg}]
+indent_size = 2
+
+# Terraform
+[*.{tf,tfvars}]
+indent_size = 2
+
+# Shell scripts
+[*.{sh,bat.tpl,Makefile.tpl}]
+indent_style = tab
+
+# Makefiles
+[Makefile]
+indent_style = tab
+
+# windows scripts
+[*.{cmd,bat}]
+end_of_line = crlf
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
+
+# diff files
+[*.diff]
+trim_trailing_whitespace = false

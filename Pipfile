@@ -13,6 +13,8 @@ boto3 = "*"
 aws-lambda-typing = "*"
 aws-cdk-lib = "~=2.66"
 constructs = "~=10.0"
+Pygments = "~=2.18.0"
+markdown = "*"
 
 [dev-packages]
 segno = "*"
