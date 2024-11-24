@@ -87,13 +87,14 @@ export default {
   },
   methods: {
     async fetchTalks() {
+      const cutOff = DateTime.now().plus({days: 90});
       const baseOptions = {
         method: 'GET',
         headers: {'Content-Type': 'application/json', 'x-api-key': `${import.meta.env.VITE_SLACK_API_KEY}`}
       };
       const response = await fetch(`${import.meta.env.VITE_API_URL}/events_list/`, baseOptions);
       const talks = await response.json();
-      this.talks = talks.map(talk => {
+      this.talks = talks.filter(talk => DateTime.fromMillis(talk.time) < cutOff).map(talk => {
         const time = DateTime.fromMillis(talk.time).toLocaleString(DateTime.DATETIME_FULL);
         const venue = talk.venue ? `${talk.venue.name} @ ${talk.venue.address_1} ${talk.venue.city}` : ''
         return {
