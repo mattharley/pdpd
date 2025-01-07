@@ -5,7 +5,7 @@
         <p class="max-w-3xl mt-2 mx-auto text-xl text-gray-500 p-4">
             At Python WA, we want to create a community that is friendly and inviting for newbies and professionals alike. 
             This is why we have adopted the 
-            <a class="text-blue-700" href="https://policies.python.org/python.org/code-of-conduct/#:~:text=and%20growing%20community.-,Our%20Community,patches%2C%20problems%2C%20or%20otherwise" target="_blank">
+            <a class="text-blue-700" href="https://policies.python.org/python.org/code-of-conduct" target="_blank">
                 Python Software Foundation Code of Conduct
             </a> 
             that applies to our events, Slack channel and all associated activities.
