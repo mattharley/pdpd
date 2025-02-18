@@ -13,6 +13,7 @@ from aws_cdk import (
 )
 from constructs import Construct
 
+RUNTIME_PYTHON____ = aws_lambda.Runtime.PYTHON_3_13
 PYTHON_WA_API_KEY = os.environ["PYTHON_WA_API_KEY"]
 
 THIS_DIR = Path(__file__).resolve().parent
@@ -96,7 +97,7 @@ class ServerlessBackendStack(Stack):
             "python_wa_default_layer",
             code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "default_layer.zip")),
             description="PythonWA default layer with Requests and Pydantic",
-            compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_11],
+            compatible_runtimes=[RUNTIME_PYTHON____],
             removal_policy=RemovalPolicy.DESTROY,
         )
 
@@ -105,7 +106,7 @@ class ServerlessBackendStack(Stack):
             "markdown_layer",
             code=aws_lambda.Code.from_asset(str(LAMBDA_LAYERS_DIR / "markdown_layer.zip")),
             description="Markdown layer",
-            compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_11],
+            compatible_runtimes=[RUNTIME_PYTHON____],
             removal_policy=RemovalPolicy.DESTROY,
         )
 
@@ -128,7 +129,7 @@ class ServerlessBackendStack(Stack):
             id="lambdafunction",
             function_name="pythonwa_slack_invite_lambda",
             description="PythonWA Slack Invite API handler",
-            runtime=aws_lambda.Runtime.PYTHON_3_11,
+            runtime=RUNTIME_PYTHON____,
             handler="lambda_handler.handler",
             code=aws_lambda.Code.from_asset(str(LAMBDA_DIR / "slack_invite")),
             environment={
@@ -162,7 +163,7 @@ class ServerlessBackendStack(Stack):
             id="event_list_lambdafunction",
             function_name="pythonwa_events_list_lambda",
             description="PythonWA Events List API handler",
-            runtime=aws_lambda.Runtime.PYTHON_3_11,
+            runtime=RUNTIME_PYTHON____,
             handler="lambda_handler.handler",
             code=aws_lambda.Code.from_asset(str(LAMBDA_DIR / "events_list")),
             environment={

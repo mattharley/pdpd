@@ -1,16 +1,15 @@
-[tool.poetry]
+[project]
 name = "pythonwa-default-layer"
 version = "0.1.0"
 description = ""
-authors = ["Ben Fitzhardinge <ben@fitzhardinge.net>"]
 readme = "README.md"
+requires-python = ">=3.13"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-pydantic = "^2.7.1"
-requests = "^2.31.0"
-aws-lambda-typing = "^2.20.0"
-
+dependencies = [
+  "pydantic~=2.10.6",
+  "requests~=2.32.3",
+  "aws-lambda-typing~=2.20.0",
+]
 
 [build-system]
 requires = ["poetry-core"]

@@ -13,8 +13,8 @@ build_layer_from_requirements () {
 	# give the directory with the requirements.txt and it will build a zip
 	# with the same name as the directory
 	###
-	PY_VERSION=3.11
-	DOCKER_BUILD_IMAGE="public.ecr.aws/sam/build-python3.11:latest-x86_64"
+	PY_VERSION=3.13
+	DOCKER_BUILD_IMAGE="public.ecr.aws/sam/build-python3.13:latest-x86_64"
 	LAMBDA_LAYERS_DIR="."
 	LAYER_NAME=$1
 
@@ -52,8 +52,8 @@ build_layer_from_requirements () {
 create_requirements_from_poetry () {
 	LAYER_NAME=$1
 	pushd "$LAYER_NAME" || exit
-	poetry lock
-	poetry export -f requirements.txt --output ./requirements.txt
+	uv lock --project pyproject.toml
+	uv export --project pyproject.toml --no-emit-project > requirements.txt
 	popd || exit
 }
 

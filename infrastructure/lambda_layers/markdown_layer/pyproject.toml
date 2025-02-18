@@ -1,13 +1,13 @@
-[tool.poetry]
+[project]
 name = "pyhthonwa-markdown-layer"
 version = "0.1.0"
 description = ""
-authors = ["Ben Fitzhardinge <ben@fitzhardinge.net>"]
 readme = "README.md"
+requires-python = ">=3.13"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-markdown = "^3.6"
+dependencies = [
+  "markdown~=3.6",
+]
 
 
 [build-system]
